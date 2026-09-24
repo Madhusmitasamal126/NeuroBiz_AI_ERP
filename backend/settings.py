@@ -128,16 +128,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neurobiz_db',
-        'USER': 'postgres',
-        'PASSWORD': 'pass@123',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
