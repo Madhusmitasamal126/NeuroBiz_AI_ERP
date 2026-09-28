@@ -1,0 +1,25 @@
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f7fc;
+}
+
+.login-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  display: flex;
+  align-items: center;
+}
+
+.card {
+  border-radius: 18px;
+}
+
+.btn-primary {
+  background: #2563eb !important;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8 !important;
+}
