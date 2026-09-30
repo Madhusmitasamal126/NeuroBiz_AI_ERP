@@ -14,8 +14,8 @@ export const registerUser = async (userData) => {
 // Login API
 export const loginUser = async (username, password) => {
   const res = await api.post("/api/auth/login/", {
-    username,
-    password,
+    username: username,
+     password: password,
   });
 
   return res.data;
@@ -27,5 +27,5 @@ export const logoutUser = () => {
   sessionStorage.clear();
 };
 
-
+// export const refreshToken = async (refresh) => { const response = await axios.post( `${API_URL}/auth/refresh/`, { refresh: refresh, } ); return response.data; };
 
