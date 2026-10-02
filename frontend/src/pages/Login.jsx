@@ -1,10 +1,13 @@
 
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { loginUser } from "../services/auth";
+
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
   const navigate = useNavigate();
+
+  const { login } = useAuth();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -20,9 +23,6 @@ function Login() {
 
     const cleanUsername = username.trim();
 
-    // -------------------------
-    // Validation
-    // -------------------------
     if (!cleanUsername) {
       setError("Please enter your username.");
       return;
@@ -36,85 +36,43 @@ function Login() {
     setLoading(true);
 
     try {
-      // -------------------------
-      // Django JWT Login
-      // -------------------------
-      const data = await loginUser(cleanUsername, password);
+      console.log("Starting login...");
 
-      console.log("Login response:", data);
+      // Login through AuthContext
+      const data = await login(
+        cleanUsername,
+        password,
+        remember
+      );
 
-      // -------------------------
-      // Check JWT tokens
-      // -------------------------
-      if (!data?.access || !data?.refresh) {
-        setError(
-          "Login failed: authentication tokens were not received."
-        );
-        return;
-      }
+      console.log("Login successful:", data);
 
-      // -------------------------
-      // Clear old tokens
-      // -------------------------
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
-
-      sessionStorage.removeItem("access_token");
-      sessionStorage.removeItem("refresh_token");
-
-      // -------------------------
-      // Save new tokens
-      // -------------------------
-      if (remember) {
-        localStorage.setItem("access_token", data.access);
-        localStorage.setItem("refresh_token", data.refresh);
-      } else {
-        sessionStorage.setItem("access_token", data.access);
-        sessionStorage.setItem("refresh_token", data.refresh);
-      }
-
-      console.log("JWT token saved successfully.");
-
-      // -------------------------
-      // Go to dashboard
-      // -------------------------
+      // Automatically open dashboard
       navigate("/dashboard", {
         replace: true,
       });
 
     } catch (err) {
-      console.error("Login error:", err);
+      console.error("Login failed:", err);
 
-      // 401
       if (err.response?.status === 401) {
         setError("Invalid username or password.");
-      }
-
-      // 400
-      else if (err.response?.status === 400) {
-        const message =
+      } else if (err.response?.status === 400) {
+        setError(
           err.response?.data?.detail ||
           err.response?.data?.non_field_errors?.[0] ||
-          "Invalid login details.";
-
-        setError(message);
-      }
-
-      // Server unavailable
-      else if (!err.response) {
-        setError(
-          "Cannot connect to Django server. Make sure Django is running on port 8000."
+          "Invalid login details."
         );
-      }
-
-      // Other errors
-      else {
+      } else if (!err.response) {
+        setError(
+          "Cannot connect to Django server. Make sure Django is running."
+        );
+      } else {
         setError(
           err.response?.data?.detail ||
-          "Something went wrong. Please try again."
+          "Login failed. Please try again."
         );
       }
-
     } finally {
       setLoading(false);
     }
@@ -129,27 +87,20 @@ function Login() {
 
             <div className="card shadow-lg border-0 rounded-4 p-4">
 
-              {/* =========================
-                  HEADER
-              ========================= */}
-
+              {/* Header */}
               <div className="text-center mb-4">
 
-                <h2 className="text-primary fw-bold mb-2">
+                <h2 className="text-primary fw-bold">
                   NeuroBiz AI ERP
                 </h2>
 
-                <p className="text-muted mb-0">
-                  Enterprise Business Intelligence & Management
+                <p className="text-muted">
+                  Enterprise Business Intelligence
                 </p>
 
               </div>
 
-
-              {/* =========================
-                  ERROR MESSAGE
-              ========================= */}
-
+              {/* Error */}
               {error && (
                 <div
                   className="alert alert-danger"
@@ -159,15 +110,10 @@ function Login() {
                 </div>
               )}
 
-
-              {/* =========================
-                  LOGIN FORM
-              ========================= */}
-
+              {/* Login Form */}
               <form onSubmit={handleSubmit}>
 
                 {/* Username */}
-
                 <div className="mb-3">
 
                   <label
@@ -194,9 +140,7 @@ function Login() {
 
                 </div>
 
-
                 {/* Password */}
-
                 <div className="mb-3">
 
                   <label
@@ -222,9 +166,7 @@ function Login() {
 
                 </div>
 
-
                 {/* Remember Me */}
-
                 <div className="form-check mb-4">
 
                   <input
@@ -247,9 +189,7 @@ function Login() {
 
                 </div>
 
-
                 {/* Login Button */}
-
                 <button
                   type="submit"
                   className="btn btn-primary btn-lg w-100"
@@ -261,8 +201,7 @@ function Login() {
                       <span
                         className="spinner-border spinner-border-sm me-2"
                         role="status"
-                        aria-hidden="true"
-                      ></span>
+                      />
 
                       Signing In...
                     </>
@@ -274,11 +213,7 @@ function Login() {
 
               </form>
 
-
-              {/* =========================
-                  REGISTER
-              ========================= */}
-
+              {/* Register */}
               <div className="text-center mt-4">
 
                 <span className="text-muted">
@@ -293,7 +228,6 @@ function Login() {
                 </Link>
 
               </div>
-
 
               <hr className="my-4" />
 
@@ -312,3 +246,4 @@ function Login() {
 }
 
 export default Login;
+

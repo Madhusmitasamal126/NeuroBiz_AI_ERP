@@ -1,21 +1,33 @@
 
 import { Routes, Route, Navigate } from "react-router-dom";
 
-// Pages
+// =========================
+// PUBLIC PAGES
+// =========================
 import Login from "./pages/Login";
 import Registration from "./pages/Registration";
-import Dashboard from "./pages/DashBoard";
 
-// Authentication
+// =========================
+// PROTECTED PAGES
+// =========================
+import Dashboard from "./pages/DashBoard";
+import Employees from "./pages/Employees";
+import AddEmployee from "./pages/AddEmployee";
+import EditEmployee from "./pages/EditEmployee";
+import Profile from "./pages/Profile";
+
+// =========================
+// AUTHENTICATION
+// =========================
 import PrivateRoute from "./routes/PrivateRoute";
 
 function App() {
   return (
     <Routes>
 
-      {/* =========================
+      {/* =====================================
           PUBLIC ROUTES
-      ========================= */}
+      ===================================== */}
 
       {/* Root → Login */}
       <Route
@@ -36,9 +48,9 @@ function App() {
       />
 
 
-      {/* =========================
+      {/* =====================================
           PROTECTED ROUTES
-      ========================= */}
+      ===================================== */}
 
       {/* Dashboard */}
       <Route
@@ -50,17 +62,45 @@ function App() {
         }
       />
 
-      {/* Employees */}
+      {/* =====================================
+          EMPLOYEE MODULE
+      ===================================== */}
+
+      {/* Employee List */}
       <Route
         path="/employees"
         element={
           <PrivateRoute>
-            <div>Employees Page</div>
+            <Employees />
           </PrivateRoute>
         }
       />
 
-      {/* Attendance */}
+      {/* Add Employee */}
+      <Route
+        path="/employees/add"
+        element={
+          <PrivateRoute>
+            <AddEmployee />
+          </PrivateRoute>
+        }
+      />
+
+      {/* Edit Employee */}
+      <Route
+        path="/employees/edit/:id"
+        element={
+          <PrivateRoute>
+            <EditEmployee />
+          </PrivateRoute>
+        }
+      />
+
+
+      {/* =====================================
+          ATTENDANCE MODULE
+      ===================================== */}
+
       <Route
         path="/attendance"
         element={
@@ -70,7 +110,11 @@ function App() {
         }
       />
 
-      {/* Departments */}
+
+      {/* =====================================
+          DEPARTMENT MODULE
+      ===================================== */}
+
       <Route
         path="/departments"
         element={
@@ -80,17 +124,25 @@ function App() {
         }
       />
 
-      {/* Sales / CRM */}
+
+      {/* =====================================
+          SALES / CRM MODULE
+      ===================================== */}
+
       <Route
         path="/sales"
         element={
           <PrivateRoute>
-            <div>Sales Page</div>
+            <div>Sales / CRM Page</div>
           </PrivateRoute>
         }
       />
 
-      {/* Inventory */}
+
+      {/* =====================================
+          INVENTORY MODULE
+      ===================================== */}
+
       <Route
         path="/inventory"
         element={
@@ -100,30 +152,38 @@ function App() {
         }
       />
 
-      {/* Reports / Business Intelligence */}
+
+      {/* =====================================
+          REPORTS / BUSINESS INTELLIGENCE
+      ===================================== */}
+
       <Route
         path="/reports"
         element={
           <PrivateRoute>
-            <div>Reports Page</div>
+            <div>Reports / Business Intelligence Page</div>
           </PrivateRoute>
         }
       />
 
-      {/* Profile */}
+
+      {/* =====================================
+          PROFILE
+      ===================================== */}
+
       <Route
         path="/profile"
         element={
           <PrivateRoute>
-            <div>Profile Page</div>
+            <Profile />
           </PrivateRoute>
         }
       />
 
 
-      {/* =========================
+      {/* =====================================
           UNKNOWN URL
-      ========================= */}
+      ===================================== */}
 
       <Route
         path="*"

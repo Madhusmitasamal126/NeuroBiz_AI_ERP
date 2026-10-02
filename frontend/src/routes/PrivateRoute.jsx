@@ -1,38 +1,52 @@
-import { Navigate } from "react-router-dom";
+
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
-  // Wait until authentication status is checked
+  // =====================================
+  // CHECKING AUTHENTICATION
+  // =====================================
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center vh-100">
         <div className="text-center">
+
           <div
             className="spinner-border text-primary"
             role="status"
-          >
-            <span className="visually-hidden">
-              Loading...
-            </span>
-          </div>
+            aria-hidden="true"
+          ></div>
 
           <p className="mt-3 text-muted">
-            Loading...
+            Checking authentication...
           </p>
+
         </div>
       </div>
     );
   }
 
-  // User logged in → allow dashboard
-  if (user) {
-    return children;
+  // =====================================
+  // USER IS NOT LOGGED IN
+  // =====================================
+  if (!user) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{ from: location }}
+      />
+    );
   }
 
-  // User not logged in → go to login
-  return <Navigate to="/" replace />;
+  // =====================================
+  // USER IS LOGGED IN
+  // =====================================
+  return children;
 }
 
 export default PrivateRoute;
+
