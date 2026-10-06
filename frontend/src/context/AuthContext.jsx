@@ -1,55 +1,204 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { loginUser, logoutUser } from "../services/auth";
+import {
+    createContext,
+    useContext,
+    useEffect,
+    useState,
+} from "react";
 
-const AuthContext = createContext();
+import {
+    loginUser,
+    logoutUser,
+} from "../services/auth";
 
-export const useAuth = () => useContext(AuthContext);
+
+const AuthContext = createContext(null);
+
+
+// =====================================================
+// USE AUTH
+// =====================================================
+
+export const useAuth = () => {
+    return useContext(AuthContext);
+};
+
+
+// =====================================================
+// AUTH PROVIDER
+// =====================================================
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const token =
-      localStorage.getItem("access") ||
-      sessionStorage.getItem("access");
+    const [user, setUser] = useState(null);
 
-    if (token) {
-      setUser({ loggedIn: true });
-    }
+    const [loading, setLoading] = useState(true);
 
-    setLoading(false);
-  }, []);
 
-  const login = async (
-    username,
-    password,
-    remember
-  ) => {
-    const data = await loginUser(username, password);
+    // =================================================
+    // CHECK EXISTING LOGIN
+    // =================================================
 
-    if (remember) {
-      localStorage.setItem("access", data.access);
-      localStorage.setItem("refresh", data.refresh);
-    } else {
-      sessionStorage.setItem("access", data.access);
-      sessionStorage.setItem("refresh", data.refresh);
-    }
+    useEffect(() => {
 
-    setUser({ username });
-  };
+        const accessToken =
+            localStorage.getItem("access_token") ||
+            sessionStorage.getItem("access_token");
 
-  const logout = () => {
-    logoutUser();
-    setUser(null);
-    window.location.href = "/";
-  };
 
-  return (
-    <AuthContext.Provider
-      value={{ user, login, logout, loading }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+        if (accessToken) {
+
+            setUser({
+                loggedIn: true,
+            });
+
+        } else {
+
+            setUser(null);
+
+        }
+
+
+        setLoading(false);
+
+    }, []);
+
+
+    // =================================================
+    // LOGIN
+    // =================================================
+
+    const login = async (
+        username,
+        password,
+        remember = false
+    ) => {
+
+        const data = await loginUser(
+            username,
+            password
+        );
+
+
+        console.log(
+            "LOGIN DATA:",
+            data
+        );
+
+
+        if (!data?.access) {
+
+            throw new Error(
+                "Access token was not received from Django."
+            );
+
+        }
+
+
+        // =============================================
+        // REMOVE OLD TOKENS
+        // =============================================
+
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+
+        sessionStorage.removeItem("access_token");
+        sessionStorage.removeItem("refresh_token");
+
+        sessionStorage.removeItem("access");
+        sessionStorage.removeItem("refresh");
+
+
+        // =============================================
+        // SAVE NEW TOKENS
+        // =============================================
+
+        if (remember) {
+
+            localStorage.setItem(
+                "access_token",
+                data.access
+            );
+
+            localStorage.setItem(
+                "refresh_token",
+                data.refresh
+            );
+
+        } else {
+
+            sessionStorage.setItem(
+                "access_token",
+                data.access
+            );
+
+            sessionStorage.setItem(
+                "refresh_token",
+                data.refresh
+            );
+
+        }
+
+
+        console.log(
+            "TOKEN SAVED:",
+            remember
+                ? localStorage.getItem("access_token")
+                : sessionStorage.getItem("access_token")
+        );
+
+
+        // =============================================
+        // SET USER
+        // =============================================
+
+        setUser({
+            username: username,
+            loggedIn: true,
+        });
+
+
+        return data;
+
+    };
+
+
+    // =================================================
+    // LOGOUT
+    // =================================================
+
+    const logout = () => {
+
+        logoutUser();
+
+        setUser(null);
+
+        window.location.href = "/login";
+
+    };
+
+
+    // =================================================
+    // CONTEXT
+    // =================================================
+
+    return (
+
+        <AuthContext.Provider
+            value={{
+                user,
+                login,
+                logout,
+                loading,
+            }}
+        >
+
+            {children}
+
+        </AuthContext.Provider>
+
+    );
+
 }

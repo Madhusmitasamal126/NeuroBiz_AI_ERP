@@ -4,6 +4,8 @@ from django.http import JsonResponse
 
 from .models import Employee
 from .serializers import EmployeeSerializer
+from .models import Department
+from .serializers import DepartmentSerializer
 
 class EmployeeViewSet(viewsets.ModelViewSet):
 
@@ -17,3 +19,13 @@ def home(request):
         "message": "NeuroBiz AI ERP Backend Running",
         "status": "success"
     })
+
+class DepartmentViewSet(viewsets.ModelViewSet):
+
+    queryset = Department.objects.all().order_by("id")
+
+    serializer_class = DepartmentSerializer
+
+    permission_classes = [
+        IsAuthenticated
+    ]

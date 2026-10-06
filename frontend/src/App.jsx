@@ -1,4 +1,3 @@
-
 import { Routes, Route, Navigate } from "react-router-dom";
 
 // =========================
@@ -11,9 +10,21 @@ import Registration from "./pages/Registration";
 // PROTECTED PAGES
 // =========================
 import Dashboard from "./pages/DashBoard";
+
 import Employees from "./pages/Employees";
 import AddEmployee from "./pages/AddEmployee";
 import EditEmployee from "./pages/EditEmployee";
+
+import Attendance from "./pages/Attendance";
+
+import Departments from "./pages/Departments";
+import DepartmentAdd from "./pages/DepartmentAdd";
+import DepartmentEdit from "./pages/DepartmentEdit";
+
+import Sales from "./pages/Sales";
+import Inventory from "./pages/Inventory";
+import Reports from "./pages/Reports";
+
 import Profile from "./pages/Profile";
 
 // =========================
@@ -22,177 +33,198 @@ import Profile from "./pages/Profile";
 import PrivateRoute from "./routes/PrivateRoute";
 
 function App() {
-  return (
-    <Routes>
+    return (
+        <Routes>
 
-      {/* =====================================
-          PUBLIC ROUTES
-      ===================================== */}
+            {/* =========================
+                PUBLIC ROUTES
+            ========================= */}
 
-      {/* Root → Login */}
-      <Route
-        path="/"
-        element={<Navigate to="/login" replace />}
-      />
+            <Route
+                path="/"
+                element={
+                    <Navigate
+                        to="/login"
+                        replace
+                    />
+                }
+            />
 
-      {/* Login */}
-      <Route
-        path="/login"
-        element={<Login />}
-      />
+            <Route
+                path="/login"
+                element={<Login />}
+            />
 
-      {/* Registration */}
-      <Route
-        path="/register"
-        element={<Registration />}
-      />
-
-
-      {/* =====================================
-          PROTECTED ROUTES
-      ===================================== */}
-
-      {/* Dashboard */}
-      <Route
-        path="/dashboard"
-        element={
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        }
-      />
-
-      {/* =====================================
-          EMPLOYEE MODULE
-      ===================================== */}
-
-      {/* Employee List */}
-      <Route
-        path="/employees"
-        element={
-          <PrivateRoute>
-            <Employees />
-          </PrivateRoute>
-        }
-      />
-
-      {/* Add Employee */}
-      <Route
-        path="/employees/add"
-        element={
-          <PrivateRoute>
-            <AddEmployee />
-          </PrivateRoute>
-        }
-      />
-
-      {/* Edit Employee */}
-      <Route
-        path="/employees/edit/:id"
-        element={
-          <PrivateRoute>
-            <EditEmployee />
-          </PrivateRoute>
-        }
-      />
+            <Route
+                path="/register"
+                element={<Registration />}
+            />
 
 
-      {/* =====================================
-          ATTENDANCE MODULE
-      ===================================== */}
+            {/* =========================
+                DASHBOARD
+            ========================= */}
 
-      <Route
-        path="/attendance"
-        element={
-          <PrivateRoute>
-            <div>Attendance Page</div>
-          </PrivateRoute>
-        }
-      />
-
-
-      {/* =====================================
-          DEPARTMENT MODULE
-      ===================================== */}
-
-      <Route
-        path="/departments"
-        element={
-          <PrivateRoute>
-            <div>Departments Page</div>
-          </PrivateRoute>
-        }
-      />
+            <Route
+                path="/dashboard"
+                element={
+                    <PrivateRoute>
+                        <Dashboard />
+                    </PrivateRoute>
+                }
+            />
 
 
-      {/* =====================================
-          SALES / CRM MODULE
-      ===================================== */}
+            {/* =========================
+                EMPLOYEE MODULE
+            ========================= */}
 
-      <Route
-        path="/sales"
-        element={
-          <PrivateRoute>
-            <div>Sales / CRM Page</div>
-          </PrivateRoute>
-        }
-      />
+            <Route
+                path="/employees"
+                element={
+                    <PrivateRoute>
+                        <Employees />
+                    </PrivateRoute>
+                }
+            />
 
+            <Route
+                path="/employees/add"
+                element={
+                    <PrivateRoute>
+                        <AddEmployee />
+                    </PrivateRoute>
+                }
+            />
 
-      {/* =====================================
-          INVENTORY MODULE
-      ===================================== */}
-
-      <Route
-        path="/inventory"
-        element={
-          <PrivateRoute>
-            <div>Inventory Page</div>
-          </PrivateRoute>
-        }
-      />
-
-
-      {/* =====================================
-          REPORTS / BUSINESS INTELLIGENCE
-      ===================================== */}
-
-      <Route
-        path="/reports"
-        element={
-          <PrivateRoute>
-            <div>Reports / Business Intelligence Page</div>
-          </PrivateRoute>
-        }
-      />
+            <Route
+                path="/employees/edit/:id"
+                element={
+                    <PrivateRoute>
+                        <EditEmployee />
+                    </PrivateRoute>
+                }
+            />
 
 
-      {/* =====================================
-          PROFILE
-      ===================================== */}
+            {/* =========================
+                ATTENDANCE MODULE
+            ========================= */}
 
-      <Route
-        path="/profile"
-        element={
-          <PrivateRoute>
-            <Profile />
-          </PrivateRoute>
-        }
-      />
+            <Route
+                path="/attendance"
+                element={
+                    <PrivateRoute>
+                        <Attendance />
+                    </PrivateRoute>
+                }
+            />
 
 
-      {/* =====================================
-          UNKNOWN URL
-      ===================================== */}
+            {/* =========================
+                DEPARTMENT MODULE
+            ========================= */}
 
-      <Route
-        path="*"
-        element={<Navigate to="/login" replace />}
-      />
+            <Route
+                path="/departments"
+                element={
+                    <PrivateRoute>
+                        <Departments />
+                    </PrivateRoute>
+                }
+            />
 
-    </Routes>
-  );
+            <Route
+                path="/departments/add"
+                element={
+                    <PrivateRoute>
+                        <DepartmentAdd />
+                    </PrivateRoute>
+                }
+            />
+
+            <Route
+                path="/departments/edit/:id"
+                element={
+                    <PrivateRoute>
+                        <DepartmentEdit />
+                    </PrivateRoute>
+                }
+            />
+
+
+            {/* =========================
+                SALES / CRM
+            ========================= */}
+
+            <Route
+                path="/sales"
+                element={
+                    <PrivateRoute>
+                        <Sales />
+                    </PrivateRoute>
+                }
+            />
+
+
+            {/* =========================
+                INVENTORY
+            ========================= */}
+
+            <Route
+                path="/inventory"
+                element={
+                    <PrivateRoute>
+                        <Inventory />
+                    </PrivateRoute>
+                }
+            />
+
+
+            {/* =========================
+                REPORTS / BI
+            ========================= */}
+
+            <Route
+                path="/reports"
+                element={
+                    <PrivateRoute>
+                        <Reports />
+                    </PrivateRoute>
+                }
+            />
+
+
+            {/* =========================
+                PROFILE
+            ========================= */}
+
+            <Route
+                path="/profile"
+                element={
+                    <PrivateRoute>
+                        <Profile />
+                    </PrivateRoute>
+                }
+            />
+
+
+            {/* =========================
+                UNKNOWN URL
+            ========================= */}
+
+            <Route
+                path="*"
+                element={
+                    <Navigate
+                        to="/login"
+                        replace
+                    />
+                }
+            />
+
+        </Routes>
+    );
 }
 
 export default App;
-

@@ -22,8 +22,17 @@ class Employee(models.Model):
 
 
 class Department(models.Model):
-    name = models.CharField(max_length=100)
-    location = models.CharField(max_length=100, blank=True)
+
+    name = models.CharField(
+        max_length=100,
+        unique=True
+    )
+
+    location = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
         return self.name
