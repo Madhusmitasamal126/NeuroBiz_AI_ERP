@@ -35,4 +35,8 @@ urlpatterns = [
     path("api/", include("employees.urls")),
      # Accounts
     path("api/accounts/", include("accounts.urls")),
+    path(
+        "api/analytics/",
+        include("analytics.urls")
+    ),
 ]
