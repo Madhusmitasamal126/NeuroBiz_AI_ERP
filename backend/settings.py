@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv(
     "DJANGO_SECRET_KEY",
     "django-insecure-change-this-key"
 )
-
+SECRET_KEY = "django-neurobiz-ai-erp-development-secret-key-2026"
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
 ALLOWED_HOSTS = [
@@ -235,6 +235,13 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=60
+    ),
+
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        days=1
+    ),
+
 }

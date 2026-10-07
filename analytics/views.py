@@ -12,20 +12,15 @@ from .services import (
 
 class AnalyticsDashboardView(APIView):
 
-    permission_classes = [
-        IsAuthenticated
-    ]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
 
-        return Response({
-
+        data = {
             "kpis": calculate_kpis(),
-
             "growth": revenue_growth(),
-
             "monthly_trends": monthly_trends(),
-
             "departments": department_analysis(),
+        }
 
-        })
+        return Response(data)

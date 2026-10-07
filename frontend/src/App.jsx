@@ -16,7 +16,7 @@ import AddEmployee from "./pages/AddEmployee";
 import EditEmployee from "./pages/EditEmployee";
 
 import Attendance from "./pages/Attendance";
-
+import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import Departments from "./pages/Departments";
 import DepartmentAdd from "./pages/DepartmentAdd";
 import DepartmentEdit from "./pages/DepartmentEdit";
@@ -151,7 +151,14 @@ function App() {
                     </PrivateRoute>
                 }
             />
-
+<Route
+    path="/analytics"
+    element={
+        <PrivateRoute>
+            <AnalyticsDashboard />
+        </PrivateRoute>
+    }
+/>
 
             {/* =========================
                 SALES / CRM
