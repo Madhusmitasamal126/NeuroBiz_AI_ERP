@@ -37,6 +37,11 @@ const menuItems = [
     icon: "bi-box-seam",
   },
   {
+    name: "Analytics",
+    path: "/analytics",
+    icon: "bi-graph-up-arrow",
+  },
+  {
     name: "Reports",
     path: "/reports",
     icon: "bi-bar-chart",
@@ -62,6 +67,7 @@ export default function Sidebar() {
   return (
     <aside className="sidebar bg-dark text-white">
 
+      {/* BRAND */}
       <div className="sidebar-brand">
         <h4 className="mb-0">
           NeuroBiz
@@ -72,6 +78,7 @@ export default function Sidebar() {
         </small>
       </div>
 
+      {/* MENU */}
       <nav className="sidebar-menu">
 
         {menuItems.map((item) => (
@@ -80,9 +87,7 @@ export default function Sidebar() {
             to={item.path}
             className={({ isActive }) =>
               `sidebar-link ${
-                isActive
-                  ? "active"
-                  : ""
+                isActive ? "active" : ""
               }`
             }
           >
@@ -96,6 +101,7 @@ export default function Sidebar() {
           </NavLink>
         ))}
 
+        {/* LOGOUT */}
         <button
           type="button"
           className="sidebar-link logout-button"

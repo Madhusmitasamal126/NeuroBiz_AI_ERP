@@ -16,11 +16,29 @@ class AnalyticsDashboardView(APIView):
 
     def get(self, request):
 
-        data = {
-            "kpis": calculate_kpis(),
-            "growth": revenue_growth(),
-            "monthly_trends": monthly_trends(),
-            "departments": department_analysis(),
-        }
+        try:
 
-        return Response(data)
+            kpis = calculate_kpis()
+
+            trends = monthly_trends()
+
+            growth = revenue_growth()
+
+            departments = department_analysis()
+
+            return Response({
+                "kpis": kpis,
+                "monthly_trends": trends,
+                "revenue_growth": growth,
+                "department_analysis": departments,
+            })
+
+        except Exception as e:
+
+            return Response(
+                {
+                    "error": "Analytics calculation failed",
+                    "details": str(e),
+                },
+                status=500,
+            )

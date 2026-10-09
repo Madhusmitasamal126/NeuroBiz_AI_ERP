@@ -16,7 +16,7 @@ import AddEmployee from "./pages/AddEmployee";
 import EditEmployee from "./pages/EditEmployee";
 
 import Attendance from "./pages/Attendance";
-import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+
 import Departments from "./pages/Departments";
 import DepartmentAdd from "./pages/DepartmentAdd";
 import DepartmentEdit from "./pages/DepartmentEdit";
@@ -24,13 +24,18 @@ import DepartmentEdit from "./pages/DepartmentEdit";
 import Sales from "./pages/Sales";
 import Inventory from "./pages/Inventory";
 import Reports from "./pages/Reports";
-
 import Profile from "./pages/Profile";
+
+// =========================
+// ANALYTICS
+// =========================
+import Analytics from "./pages/Analytics";
 
 // =========================
 // AUTHENTICATION
 // =========================
 import PrivateRoute from "./routes/PrivateRoute";
+
 
 function App() {
     return (
@@ -151,14 +156,21 @@ function App() {
                     </PrivateRoute>
                 }
             />
-<Route
-    path="/analytics"
-    element={
-        <PrivateRoute>
-            <AnalyticsDashboard />
-        </PrivateRoute>
-    }
-/>
+
+
+            {/* =========================
+                ANALYTICS MODULE
+            ========================= */}
+
+            <Route
+                path="/analytics"
+                element={
+                    <PrivateRoute>
+                        <Analytics />
+                    </PrivateRoute>
+                }
+            />
+
 
             {/* =========================
                 SALES / CRM
