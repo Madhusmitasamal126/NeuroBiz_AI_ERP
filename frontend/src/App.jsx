@@ -35,7 +35,7 @@ import Analytics from "./pages/Analytics";
 // AUTHENTICATION
 // =========================
 import PrivateRoute from "./routes/PrivateRoute";
-
+import AIInsights from "./pages/AIInsights";
 
 function App() {
     return (
@@ -213,7 +213,14 @@ function App() {
                 }
             />
 
-
+<Route
+  path="/ai-insights"
+  element={
+    <PrivateRoute>
+      <AIInsights />
+    </PrivateRoute>
+  }
+/>
             {/* =========================
                 PROFILE
             ========================= */}
