@@ -16,7 +16,7 @@ import AddEmployee from "./pages/AddEmployee";
 import EditEmployee from "./pages/EditEmployee";
 
 import Attendance from "./pages/Attendance";
-
+import ExcelAnalytics from "./pages/ExcelAnalytics";
 import Departments from "./pages/Departments";
 import DepartmentAdd from "./pages/DepartmentAdd";
 import DepartmentEdit from "./pages/DepartmentEdit";
@@ -124,7 +124,14 @@ function App() {
                     </PrivateRoute>
                 }
             />
-
+<Route
+  path="/excel-analytics"
+  element={
+    <PrivateRoute>
+      <ExcelAnalytics />
+    </PrivateRoute>
+  }
+/>
 
             {/* =========================
                 DEPARTMENT MODULE

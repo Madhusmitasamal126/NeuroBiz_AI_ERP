@@ -100,7 +100,9 @@ export default function Sidebar() {
             </span>
           </NavLink>
         ))}
-
+<NavLink to="/excel-analytics">
+  Excel Analytics
+</NavLink>
         {/* LOGOUT */}
         <button
           type="button"
