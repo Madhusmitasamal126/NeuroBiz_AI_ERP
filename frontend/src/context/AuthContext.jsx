@@ -1,204 +1,164 @@
 import {
-    createContext,
-    useContext,
-    useEffect,
-    useState,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
 } from "react";
 
 import {
-    loginUser,
-    logoutUser,
+  loginUser,
+  logoutUser,
 } from "../services/auth";
 
+import api from "../services/api";
 
 const AuthContext = createContext(null);
-
 
 // =====================================================
 // USE AUTH
 // =====================================================
 
 export const useAuth = () => {
-    return useContext(AuthContext);
+  return useContext(AuthContext);
 };
-
 
 // =====================================================
 // AUTH PROVIDER
 // =====================================================
 
 export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    const [user, setUser] = useState(null);
+  // =====================================================
+  // CHECK EXISTING LOGIN
+  // =====================================================
 
-    const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const accessToken =
+      localStorage.getItem("access_token") ||
+      sessionStorage.getItem("access_token") ||
+      localStorage.getItem("access") ||
+      sessionStorage.getItem("access");
 
+    if (accessToken) {
+      setUser({
+        loggedIn: true,
+      });
+    } else {
+      setUser(null);
+    }
 
-    // =================================================
-    // CHECK EXISTING LOGIN
-    // =================================================
+    setLoading(false);
+  }, []);
 
-    useEffect(() => {
+  // =====================================================
+  // LOGIN
+  // =====================================================
 
-        const accessToken =
-            localStorage.getItem("access_token") ||
-            sessionStorage.getItem("access_token");
+  const login = async (
+    username,
+    password,
+    remember = false
+  ) => {
+    const data = await loginUser(username, password);
 
+    console.log("LOGIN DATA:", data);
 
-        if (accessToken) {
+    if (!data?.access) {
+      throw new Error(
+        "Access token was not received from Django."
+      );
+    }
 
-            setUser({
-                loggedIn: true,
-            });
+    // Remove old tokens from both storages.
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
 
-        } else {
+    sessionStorage.removeItem("access_token");
+    sessionStorage.removeItem("refresh_token");
+    sessionStorage.removeItem("access");
+    sessionStorage.removeItem("refresh");
 
-            setUser(null);
+    // Save new tokens.
+    const storage = remember
+      ? localStorage
+      : sessionStorage;
 
-        }
+    storage.setItem("access_token", data.access);
 
+    if (data.refresh) {
+      storage.setItem("refresh_token", data.refresh);
+    }
 
-        setLoading(false);
+    console.log("TOKEN SAVED:", remember);
 
-    }, []);
+    // Update logged-in user.
+    setUser({
+      username,
+      loggedIn: true,
+    });
 
+    return data;
+  };
 
-    // =================================================
-    // LOGIN
-    // =================================================
+  // =====================================================
+  // LOGOUT + AUTOMATIC ATTENDANCE CHECKOUT
+  // =====================================================
 
-    const login = async (
-        username,
-        password,
-        remember = false
-    ) => {
+  const logout = async () => {
+    try {
+      // Close the attendance session in Django first.
+      // This assumes Axios baseURL already includes /api.
+      await api.post("/auth/logout/");
+    } catch (error) {
+      console.error(
+        "Attendance checkout failed:",
+        error
+      );
+    } finally {
+      // Clear tokens regardless of checkout request result.
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
 
-        const data = await loginUser(
-            username,
-            password
-        );
+      sessionStorage.removeItem("access_token");
+      sessionStorage.removeItem("refresh_token");
+      sessionStorage.removeItem("access");
+      sessionStorage.removeItem("refresh");
 
-
-        console.log(
-            "LOGIN DATA:",
-            data
-        );
-
-
-        if (!data?.access) {
-
-            throw new Error(
-                "Access token was not received from Django."
-            );
-
-        }
-
-
-        // =============================================
-        // REMOVE OLD TOKENS
-        // =============================================
-
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
-
-        localStorage.removeItem("access");
-        localStorage.removeItem("refresh");
-
-        sessionStorage.removeItem("access_token");
-        sessionStorage.removeItem("refresh_token");
-
-        sessionStorage.removeItem("access");
-        sessionStorage.removeItem("refresh");
-
-
-        // =============================================
-        // SAVE NEW TOKENS
-        // =============================================
-
-        if (remember) {
-
-            localStorage.setItem(
-                "access_token",
-                data.access
-            );
-
-            localStorage.setItem(
-                "refresh_token",
-                data.refresh
-            );
-
-        } else {
-
-            sessionStorage.setItem(
-                "access_token",
-                data.access
-            );
-
-            sessionStorage.setItem(
-                "refresh_token",
-                data.refresh
-            );
-
-        }
-
-
-        console.log(
-            "TOKEN SAVED:",
-            remember
-                ? localStorage.getItem("access_token")
-                : sessionStorage.getItem("access_token")
-        );
-
-
-        // =============================================
-        // SET USER
-        // =============================================
-
-        setUser({
-            username: username,
-            loggedIn: true,
-        });
-
-
-        return data;
-
-    };
-
-
-    // =================================================
-    // LOGOUT
-    // =================================================
-
-    const logout = () => {
-
+      // Preserve existing auth-service cleanup.
+      try {
         logoutUser();
+      } catch (error) {
+        console.error(
+          "Logout service cleanup failed:",
+          error
+        );
+      }
 
-        setUser(null);
+      setUser(null);
+      window.location.href = "/login";
+    }
+  };
 
-        window.location.href = "/login";
+  // =====================================================
+  // CONTEXT
+  // =====================================================
 
-    };
-
-
-    // =================================================
-    // CONTEXT
-    // =================================================
-
-    return (
-
-        <AuthContext.Provider
-            value={{
-                user,
-                login,
-                logout,
-                loading,
-            }}
-        >
-
-            {children}
-
-        </AuthContext.Provider>
-
-    );
-
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        loading,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }

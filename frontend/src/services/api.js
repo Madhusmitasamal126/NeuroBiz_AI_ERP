@@ -15,7 +15,7 @@ const api = axios.create({
   },
 });
 
-// Attach the JWT token to protected requests.
+// Attach JWT access token to API requests.
 api.interceptors.request.use(
   (config) => {
     const token =
@@ -25,6 +25,7 @@ api.interceptors.request.use(
       sessionStorage.getItem("access");
 
     if (token) {
+      config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
     }
 
@@ -38,6 +39,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Log API errors to help with debugging.
 api.interceptors.response.use(
   (response) => response,
   (error) => {
