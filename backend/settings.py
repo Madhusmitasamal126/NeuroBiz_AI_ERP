@@ -61,7 +61,9 @@ INSTALLED_APPS = [
     "accounts",
     "employees",
     "analytics",
-    "attendance"
+    "attendance",
+    "products",
+    "inventory",
 ]
 
 
