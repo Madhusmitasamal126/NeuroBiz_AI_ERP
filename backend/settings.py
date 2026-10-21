@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     "attendance",
     "products",
     "inventory",
+    'reports',
 ]
 
 

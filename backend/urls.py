@@ -7,6 +7,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from .views import UserProfileView
 
 urlpatterns = [
 
@@ -54,5 +55,7 @@ urlpatterns = [
     path("api/attendance/", include("attendance.urls")),
     path("api/", include("products.urls")),
     path("api/", include("inventory.urls")),
+    path("api/", include("reports.urls")),
+    path("api/profile/", UserProfileView.as_view(), name="user-profile"),
 
 ]
