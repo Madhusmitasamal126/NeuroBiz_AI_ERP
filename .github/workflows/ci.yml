@@ -10,16 +10,21 @@ on:
     branches:
       - main
       - dev
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
   docker-build:
+    name: Validate and Build Docker Images
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
+    # CI uses a dummy password because it only validates
+    # Compose and builds images; it does not deploy the app.
     env:
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_PASSWORD: ci_dummy_password
 
     steps:
       - name: Checkout repository
@@ -28,16 +33,19 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Verify required secret
+      - name: Check required files
         run: |
-          if [ -z "$DB_PASSWORD" ]; then
-            echo "::error::DB_PASSWORD is missing. Check GitHub repository secrets."
-            exit 1
-          fi
-          echo "DB_PASSWORD is available."
+          test -f docker-compose.yml
+          test -f Dockerfile.backend
+          test -f Dockerfile.fastapi
+          test -f Dockerfile.frontend
+          echo "All required Docker files exist."
 
-      - name: Validate Compose configuration
+      - name: Validate Docker Compose configuration
         run: docker compose config --quiet
 
       - name: Build Docker images
         run: docker compose build
+
+      - name: CI completed
+        run: echo "NeuroBiz AI ERP Docker build passed."
