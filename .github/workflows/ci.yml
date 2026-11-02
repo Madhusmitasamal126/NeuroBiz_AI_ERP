@@ -6,10 +6,12 @@ on:
     branches:
       - main
       - dev
+
   pull_request:
     branches:
       - main
       - dev
+
   workflow_dispatch:
 
 permissions:
@@ -17,35 +19,47 @@ permissions:
 
 jobs:
   docker-build:
-    name: Validate and Build Docker Images
+    name: Validate and Build Application
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
-    # CI uses a dummy password because it only validates
-    # Compose and builds images; it does not deploy the app.
+    # CI environment variables
     env:
-      DB_PASSWORD: ci_dummy_password
+      DB_PASSWORD: ci-only-password
+      DB_NAME: neurobiz_db
+      DB_USER: postgres
+      DB_HOST: db
+      DB_PORT: "5432"
+      DJANGO_SECRET_KEY: ci-test-secret-key
+      OPENAI_API_KEY: ci-test-key
+      OPENAI_MODEL: gpt-4.1-mini
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      # Step 1: Checkout repository
+      - name: Checkout source code
+        uses: actions/checkout@v5
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Check required files
+      # Step 2: Create temporary .env file
+      - name: Create CI environment file
         run: |
-          test -f docker-compose.yml
-          test -f Dockerfile.backend
-          test -f Dockerfile.fastapi
-          test -f Dockerfile.frontend
-          echo "All required Docker files exist."
+          printf 'DB_PASSWORD=%s\n' "$DB_PASSWORD" > .env
+          printf 'DB_NAME=%s\n' "$DB_NAME" >> .env
+          printf 'DB_USER=%s\n' "$DB_USER" >> .env
+          printf 'DB_HOST=%s\n' "$DB_HOST" >> .env
+          printf 'DB_PORT=%s\n' "$DB_PORT" >> .env
+          printf 'DJANGO_SECRET_KEY=%s\n' "$DJANGO_SECRET_KEY" >> .env
+          printf 'OPENAI_API_KEY=%s\n' "$OPENAI_API_KEY" >> .env
+          printf 'OPENAI_MODEL=%s\n' "$OPENAI_MODEL" >> .env
 
-      - name: Validate Docker Compose configuration
+      # Step 3: Validate Docker Compose
+      - name: Validate Docker Compose
         run: docker compose config --quiet
 
+      # Step 4: Build Docker images
       - name: Build Docker images
-        run: docker compose build
+        run: docker compose build --pull --progress plain
 
-      - name: CI completed
-        run: echo "NeuroBiz AI ERP Docker build passed."
+      # Step 5: Success message
+      - name: CI completed successfully
+        if: success()
+        run: echo "NeuroBiz AI ERP CI pipeline completed successfully!"
