@@ -17,3 +17,24 @@ class Employee(models.Model):
 
     def __str__(self):
         return self.employee_id
+
+  
+
+
+class Department(models.Model):
+
+    name = models.CharField(
+        max_length=100,
+        unique=True
+    )
+
+    location = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True
+    )
+
+    def __str__(self):
+        return self.name
+
+
